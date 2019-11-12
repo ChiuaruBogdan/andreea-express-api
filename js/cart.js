@@ -21,12 +21,14 @@ window.Cart = {
 
 
     getProductHtml: function(product) {
-        return ` <tr class="cart_item">
+        return `<tr class="cart_item id-${product.id} ${product.id}">
                                             <td class="product-remove">
-                                                <a title="Remove this item" class="remove" href="#">×</a> 
+                                            <input class="itemId" type="hidden" value="${product.id}">
+                                                <a title="Remove this item" class="remove" data-product_id="${product.id}" onclick="Cart.deleteProduct(${product.id}); return false;" href="#">×</a> 
                                             </td>
                                             <td class="product-thumbnail">
                                                 <a href="single-product.html"><img width="145" height="145" alt="poster_1_up" class="shop_thumbnail" src="img/product-thumb-2.jpg"></a>
+
                                             </td>
                                             <td class="product-name">
                                                 <a href="single-product.html">${product.name}</a> 
@@ -34,13 +36,14 @@ window.Cart = {
                                             <td class="product-price">
                                                 <span class="amount">£${product.price}</span> 
                                             </td>
-                                            <td class="product-quantity">
+                                           <td class="product-quantity-${product.id}">
                                                 <div class="quantity buttons_added">
-                                                    <input type="button" class="minus" value="-">
-                                                    <input type="number" size="4" class="input-text qty text" title="Qty" value="1" min="0" step="1">
-                                                    <input type="button" class="plus" value="+">
+                                                    <input type="button" class="minus" value="-" onclick="Cart.addMinusButton(${product.id}); return false;">
+                                                    <input type="number" size="4" class="input-text qty text" title="Qty" value="${product.quanitity}" min="0" step="1">
+                                                    <input type="button" class="plus" value="+" onclick="Cart.addPlusButton(${product.id}); return false;">
                                                 </div>
                                             </td>
+
                                             <td class="product-subtotal">
                                                 <span class="amount">£${product.price}</span> 
                                             </td>
@@ -49,7 +52,6 @@ window.Cart = {
     },
 
     //messing with the + and - buttons, also trying to add checkout funciton
-    //de aici in jos e belea, nu mai sunt activate
     addPlusButton: function (id) {
         var currentValue = $(`.product-quantity-${id}`).find('input.input-text').val(),
             nextValue = parseInt(currentValue) + 1;
@@ -63,10 +65,9 @@ window.Cart = {
     deleteProduct: function (productId) {
         console.log(productId);
         $.ajax({
-            url:Cart.API_BASE_URL + "/carts/remove/10/" + productId,
-            method:"DELETE"
+            url: Cart.API_BASE_URL + "/carts/remove/10/" + productId,
+            method: "DELETE"
         }).done(function (response) {
-            console.log(response);
             $(`.${productId}`).html('');
             // Cart.displayProducts(response.products);
         })
@@ -104,3 +105,6 @@ window.Cart = {
 };
 
 Cart.getProducts();
+// Cart.addMinusButton();
+// Cart.addPlusButton();
+// Cart.deleteProduct();
